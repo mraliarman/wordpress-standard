@@ -1,33 +1,62 @@
-# نکات مهم Git
+# استاندارد Git، Branching و Release Workflow
 
-این سند workflow استاندارد Git برای توسعه تیمی است: branch، commit، pull request، conflict، `.gitignore` و tag/versioning. Conventional Commits قالب `<type>[scope]: description` را تعریف می‌کند و `feat`/`fix` و BREAKING CHANGE را به SemVer مرتبط می‌کند. citeturn0search2
+این سند workflow استاندارد Git برای تیم توسعه است و branch strategy، Conventional Commits، pull request، code review، conflict resolution، `.gitignore`، tagging، release branch و rollback را تعریف می‌کند. هدف این است که history پروژه قابل فهم، تغییرات قابل ردیابی و releaseها قابل بازگشت باشند.
 
 ## 2. اهداف و دامنه (Scope)
 
-پوشش: repository workflow، naming، commits، PR، conflict، ignore و release tags. CI/CD پیشرفته خارج از دامنه است.
+دامنه شامل Git repository، GitHub، branch، commit، PR، review، tag و release artifact است. CI/CD اختصاصی هر زیرساخت در سند deployment جداگانه قابل توسعه است.
 
 ## 3. استانداردها و اصول اصلی (Best Practices)
 
-Branchهای پیشنهادی: `main` برای کد release، `feature/...` برای feature، `fix/...` برای bug، `hotfix/...` برای production emergency، `docs/...` برای documentation.
+### Branch
 
-Commit نمونه:
+```text
+main
+feature/<short-name>
+fix/<short-name>
+hotfix/<short-name>
+refactor/<short-name>
+docs/<short-name>
+```
+
+`main` باید همیشه وضعیت قابل release داشته باشد. branchهای feature کوتاه‌عمر و محدود به یک هدف مشخص باشند.
+
+### Commit
+
+Conventional Commits الگوی پیشنهادی است:
 
 ```text
 feat(admin): add customer search
 fix(booking): prevent duplicate appointment
-refactor(core): simplify asset loader
 docs: update installation guide
+refactor(core): simplify asset loader
 chore: update dependencies
 ```
 
-- commit کوچک و atomic باشد.
-- message با imperative و کوتاه باشد.
-- breaking change را واضح ثبت کنید.
-- قبل از PR branch را با main هماهنگ کنید.
-- PR باید description، test evidence و risk داشته باشد.
-- force push روی main ممنوع.
+commit باید atomic باشد و message نتیجه تغییر را روشن کند. breaking change باید صریح ثبت شود.
 
-نمونه `.gitignore` PHP/WordPress:
+### Pull Request
+
+PR باید شامل problem، solution، scope، test evidence، risk و در صورت نیاز screenshot باشد. PR بزرگ باید به taskهای کوچک‌تر تقسیم شود.
+
+### Conflict
+
+اول context تغییر مقابل را بفهمید، سپس conflict را حل و تست کنید؛ صرفاً «ours/theirs» را بدون بررسی انتخاب نکنید.
+
+```bash
+git fetch origin
+git rebase origin/main
+git add <file>
+git rebase --continue
+```
+
+در صورت نیاز:
+
+```bash
+git rebase --abort
+```
+
+### `.gitignore`
 
 ```gitignore
 /vendor/
@@ -36,86 +65,94 @@ chore: update dependencies
 .env.*
 !.env.example
 *.log
+*.sql
+wp-content/uploads/
 .DS_Store
 Thumbs.db
 .idea/
-.vscode/
-*.sql
-wp-content/uploads/
 ```
 
-اگر فایل موردی عمداً باید commit شود، rule دقیق‌تر اضافه کنید؛ `.gitignore` جای secret management نیست.
+`.gitignore` جای secret management نیست؛ secret لو رفته باید revoke/rotate شود.
 
-## 4. ابزارها، کتابخانه‌ها و نسخه‌های پیشنهادی
+### Tags
 
-- Git نسخه stable جدید سازگار با محیط تیم.
-- GitHub برای remote و PR.
-- Conventional Commits 1.0.0. citeturn0search2
-- pre-commit hooks در صورت نیاز.
-
-## 5. مراحل گام‌به‌گام / چک‌لیست عملی
-
-1. `git status`.
-2. `git switch -c feature/name`.
-3. تغییر کوچک.
-4. `git diff` و `git diff --check`.
-5. تست.
-6. `git add` فقط فایل‌های لازم.
-7. commit استاندارد.
-8. `git fetch origin`.
-9. rebase/merge طبق policy تیم.
-10. push و PR.
-11. review و CI.
-12. merge.
-13. tag release.
-
-Conflict:
-
-```bash
-git fetch origin
-git rebase origin/main
-# conflict را اصلاح کنید
-git add <file>
-git rebase --continue
-```
-
-اگر rebase اشتباه شد: `git rebase --abort`.
-
-## 6. اشتباهات رایج و نحوه پیشگیری از آن‌ها (Common Pitfalls)
-
-- commit کردن `.env` یا backup.
-- commitهای عظیم و نامفهوم.
-- merge مستقیم feature بدون review.
-- force push branch مشترک.
-- حل conflict با حذف کورکورانه تغییر طرف مقابل.
-- tag بدون هماهنگی version محصول.
-
-## 7. مثال‌های کد یا نمونه واقعی
+version محصول و Git tag باید همسو باشند:
 
 ```bash
 git tag -a v1.4.0 -m "Release v1.4.0"
 git push origin v1.4.0
 ```
 
+## 4. ابزارها، کتابخانه‌ها و نسخه‌های پیشنهادی
+
+- Git نسخه stable سازگار با تیم.
+- GitHub برای repository و review.
+- Conventional Commits 1.0.0.
+- pre-commit hooks در صورت نیاز.
+- CI برای lint/test/security checks.
+
+## 5. مراحل گام‌به‌گام / چک‌لیست عملی
+
+1. issue و acceptance criteria را بخوانید.
+2. branch مناسب بسازید.
+3. تغییرات کوچک و atomic انجام دهید.
+4. `git diff --check` اجرا کنید.
+5. lint و test را اجرا کنید.
+6. commitهای معنادار بسازید.
+7. branch را با `main` هماهنگ کنید.
+8. PR باز کنید.
+9. review و CI را کامل کنید.
+10. conflictها را آگاهانه حل کنید.
+11. merge طبق policy انجام دهید.
+12. release tag ایجاد کنید.
+13. artifact و changelog را ثبت کنید.
+14. post-release را monitor کنید.
+
+## 6. اشتباهات رایج و نحوه پیشگیری از آن‌ها (Common Pitfalls)
+
+- commit `.env` یا credential.
+- commitهای عظیم.
+- branch بسیار طولانی.
+- force push روی branch مشترک.
+- merge بدون CI/review.
+- حل conflict با حذف کورکورانه تغییرات.
+- tag اشتباه یا version mismatch.
+- commit کردن build artifact بدون policy مشخص.
+
+## 7. مثال‌های کد یا نمونه واقعی
+
+```bash
+git switch -c fix/customer-search
+git diff --check
+git add src/ tests/
+git commit -m "fix(customer): handle missing phone number"
+git fetch origin
+git rebase origin/main
+git push -u origin fix/customer-search
+```
+
 ## 8. نکات امنیتی و عملکردی
 
-secretها را با secret manager نگه دارید. history Git را امن فرض نکنید؛ secret لو رفته باید revoke/rotate شود. repositoryهای بزرگ را با binaryهای بی‌دلیل سنگین نکنید.
+history Git را امن فرض نکنید. secret حذف‌شده ممکن است در history باقی بماند. secret باید revoke/rotate شود و در صورت نیاز history پاک‌سازی شود. binaryهای حجیم و dependencyهای generated غیرضروری repository را سنگین نکنند.
 
 ## 9. منابع و مراجع معتبر برای مطالعه بیشتر
 
-- Conventional Commits: https://www.conventionalcommits.org/en/v1.0.0/
 - Git Book: https://git-scm.com/book/en/v2
+- Git Documentation: https://git-scm.com/docs
+- Conventional Commits: https://www.conventionalcommits.org/en/v1.0.0/
 - GitHub Flow: https://docs.github.com/en/get-started/using-github/github-flow
 
 ## 10. چک‌لیست نهایی تأیید (Definition of Done)
 
-- [ ] branch نام مناسب دارد.
+- [ ] branch هدفمند و کوتاه‌عمر است.
 - [ ] commitها atomic و استانداردند.
 - [ ] secret/backup در repository نیست.
-- [ ] test و CI موفق است.
+- [ ] `git diff --check` موفق است.
+- [ ] lint/test/CI موفق است.
 - [ ] PR review شده است.
 - [ ] conflictها آگاهانه حل شده‌اند.
 - [ ] tag و version هماهنگ‌اند.
+- [ ] release artifact قابل ردیابی است.
 
 ## به‌روزرسانی بعدی
 
