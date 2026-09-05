@@ -1,64 +1,97 @@
-# چک‌لیست انتشار محصول در استور ژاکت
+# استاندارد انتشار نهایی محصول در استور ژاکت
 
-این سند فرآیند آماده‌سازی محصول WordPress برای انتشار در استور ژاکت را تعریف می‌کند؛ از freeze کد و تست تا مستندات، تصاویر، نسخه و بسته نهایی. قوانین دقیق استور ممکن است تغییر کند؛ موارد قراردادی/قوانین فعلی با برچسب «نیاز به بررسی» باید در زمان ارسال از مرجع رسمی ژاکت کنترل شوند.
+این سند quality gate انتشار محصول WordPress در استور ژاکت را تعریف می‌کند؛ از feature freeze و code review تا تست clean install، update، امنیت، مستندات، تصاویر، demo، versioning، packaging و کنترل artifact. قوانین بیرونی استور ممکن است تغییر کنند و هر requirement تجاری یا ابعادی که در این سند با «نیاز به بررسی» مشخص شده باید هنگام release از مرجع رسمی بررسی شود.
 
 ## 2. اهداف و دامنه (Scope)
 
-پوشش: theme/plugin release، کیفیت کد، امنیت، بسته‌بندی، مستندات، screenshots، versioning و تست. جزئیات جاری قوانین ژاکت در صورت تغییر، خارج از این سند ثابت است.
+دامنه شامل plugin/theme release، source cleanup، dependency/license review، testing، documentation، screenshots، preview، ZIP packaging، versioning و release evidence است.
 
 ## 3. استانداردها و اصول اصلی (Best Practices)
 
-- release candidate را freeze کنید.
-- debug code، dump، test account، secret، API key و فایل local حذف شوند.
-- version در header/package/changelog هماهنگ باشد.
-- dependencyهای Composer/npm و license آن‌ها بررسی شوند.
-- محصول روی WordPress تازه و سایت دارای محتوای واقعی تست شود.
-- activation، update، deactivation و uninstall بررسی شود.
-- PHP notices/warnings/fatal و JS console error صفر باشد.
-- فارسی، RTL، mobile و browserهای اصلی تست شوند.
-- readme نصب، تنظیمات، FAQ، requirements و update procedure داشته باشد.
-- screenshots واقعی و بدون داده خصوصی باشند.
-- «نیاز به بررسی»: قوانین و محدودیت‌های فعلی ژاکت، فرمت و ابعاد دقیق تصاویر و شرایط تجاری باید قبل از submit از پنل/راهنمای رسمی تأیید شوند.
+### Release Gate
+
+هیچ release صرفاً با «کار می‌کند» تأیید نمی‌شود. release باید قابل نصب، قابل update، قابل پشتیبانی و قابل توضیح باشد.
+
+### Code Quality
+
+- debug، dump، test route و temporary code حذف شود.
+- naming و coding standards بررسی شوند.
+- dependencyها ضروری و license آن‌ها مشخص باشد.
+- version در header/package/changelog/tag هماهنگ باشد.
+- deprecated APIها بررسی شوند.
+
+### Testing
+
+حداقل سناریوها:
+
+| سناریو | نتیجه مورد انتظار |
+|---|---|
+| Clean install | نصب بدون خطای fatal |
+| Activation | activation موفق |
+| Core feature | همه سناریوهای اصلی موفق |
+| Update | migration و compatibility موفق |
+| Deactivation | رفتار تعریف‌شده حفظ شود |
+| Uninstall | حذف داده طبق policy |
+| RTL/mobile | UI صحیح |
+| Browser | browserهای هدف صحیح |
+| Security | authorization/escaping/nonce صحیح |
+
+### Packaging
+
+ZIP باید فقط artifactهای لازم را داشته باشد. `.env`، backup، cache، local configuration، credential، dump و فایل‌های توسعه‌ای غیرضروری نباید داخل آن باشند.
+
+### Zhaket Rules
+
+**نیاز به بررسی:** قوانین جاری استور ژاکت، محدودیت حجم/ابعاد تصاویر، فرمت فایل‌ها، metadata اجباری، policy licensing و الزامات تجاری باید دقیقاً در زمان submit از مرجع رسمی ژاکت کنترل شوند.
 
 ## 4. ابزارها، کتابخانه‌ها و نسخه‌های پیشنهادی
 
-- WordPress stable پشتیبانی‌شده.
-- PHP و MySQL/MariaDB مطابق requirements محصول.
+- WordPress و PHP در محدوده پشتیبانی محصول.
 - WP-CLI.
-- PHPCS/WPCS، PHPStan، PHPUnit.
-- Node.js LTS و build tool پروژه.
-- Lighthouse/PageSpeed برای frontend.
+- Composer 2.x و npm در صورت کاربرد.
+- PHPCS/WPCS، PHPStan و PHPUnit.
+- Lighthouse/PageSpeed.
+- Browser DevTools.
+- ZIP tool یا build script قابل تکرار.
 
 ## 5. مراحل گام‌به‌گام / چک‌لیست عملی
 
-1. branch release را freeze کنید.
-2. version و changelog را نهایی کنید.
-3. dependency audit و license review انجام دهید.
-4. lint/static analysis/tests اجرا کنید.
-5. clean install تست کنید.
-6. update از نسخه قبلی تست کنید.
-7. activation/deactivation/uninstall را تست کنید.
-8. RTL/mobile/browser/accessibility را تست کنید.
-9. امنیت nonce/capability/escape/sanitize را بازبینی کنید.
-10. build production را بسازید.
-11. ZIP نهایی را از صفر extract و نصب کنید.
-12. فایل‌های غیرضروری را حذف کنید.
-13. مستندات و screenshots را کنترل کنید.
-14. قوانین فعلی ژاکت را دوباره بررسی کنید.
-15. checksum و نسخه artifact را ثبت کنید.
+1. feature freeze کنید.
+2. issueهای open و blockerها را ببندید.
+3. version و changelog را نهایی کنید.
+4. dependency و license audit انجام دهید.
+5. lint/static analysis/test را اجرا کنید.
+6. clean WordPress نصب کنید.
+7. محصول را install و activate کنید.
+8. سناریوهای اصلی را اجرا کنید.
+9. update از حداقل نسخه قبلی را تست کنید.
+10. deactivation/uninstall را تست کنید.
+11. RTL/mobile/accessibility/browser را تست کنید.
+12. performance و console/network error را بررسی کنید.
+13. source و artifact را برای secret/debug scan کنید.
+14. documentation، FAQ و screenshots را نهایی کنید.
+15. demo را با version محصول هماهنگ کنید.
+16. ZIP را از صفر بسازید.
+17. ZIP را در محیط تمیز extract و نصب کنید.
+18. قوانین جاری ژاکت را دوباره بررسی کنید.
+19. checksum و release commit/tag را ثبت کنید.
+20. rollback/recovery plan را مشخص کنید.
 
 ## 6. اشتباهات رایج و نحوه پیشگیری از آن‌ها (Common Pitfalls)
 
-- انتشار `.env`، backup یا source map حساس.
-- mismatch نسخه محصول و changelog.
-- تست فقط روی سایت توسعه‌دهنده.
-- نبود update migration.
-- تصاویر دارای اطلاعات مشتری.
-- مستندات ناقص یا لینک‌های شکسته.
+- انتشار build از working tree آلوده.
+- mismatch نسخه و changelog.
+- secret یا `.env` در ZIP.
+- تست فقط روی محیط توسعه.
+- تست نکردن update.
+- screenshot قدیمی یا دارای داده خصوصی.
+- مستندات بدون requirements و troubleshooting.
+- dependency license نامشخص.
+- نبود rollback plan.
 
 ## 7. مثال‌های کد یا نمونه واقعی
 
-ساخت artifact تمیز:
+build قابل تکرار:
 
 ```bash
 composer install --no-dev --optimize-autoloader
@@ -66,28 +99,34 @@ npm ci
 npm run build
 ```
 
-سپس فقط فایل‌های runtime و مستندات لازم را داخل ZIP قرار دهید.
+سپس artifact را از فایل‌های تعریف‌شده در release manifest بسازید؛ صرفاً کل working directory را ZIP نکنید.
 
 ## 8. نکات امنیتی و عملکردی
 
-secretها هرگز داخل ZIP یا Git نباشند. assetها minify شوند. query و remote request غیرضروری حذف شوند. دسترسی فایل‌ها و endpointهای admin بازبینی شود.
+secretها باید خارج از Git و artifact باشند. داده مشتری در screenshots/demo ممنوع است. debug display خاموش باشد. dependencyهای production حداقلی باشند. assetها minify و cacheable باشند. performance regressionهای مهم قبل از release اندازه‌گیری شوند.
 
 ## 9. منابع و مراجع معتبر برای مطالعه بیشتر
 
 - WordPress Plugin Handbook: https://developer.wordpress.org/plugins/
 - WordPress Theme Handbook: https://developer.wordpress.org/themes/
-- نیاز به بررسی: قوانین جاری استور ژاکت در زمان انتشار.
+- WordPress Coding Standards: https://developer.wordpress.org/coding-standards/
+- نیاز به بررسی: قوانین جاری استور ژاکت و الزامات submit در زمان انتشار.
 
 ## 10. چک‌لیست نهایی تأیید (Definition of Done)
 
+- [ ] code freeze و review کامل است.
+- [ ] version/changelog/tag هماهنگ‌اند.
+- [ ] lint/static analysis/test موفق‌اند.
 - [ ] clean install موفق است.
 - [ ] update از نسخه قبلی موفق است.
-- [ ] هیچ secret/debug artifact وجود ندارد.
-- [ ] lint/test/static analysis موفق است.
-- [ ] RTL/mobile/browser تست شده است.
-- [ ] مستندات و screenshots نهایی‌اند.
-- [ ] قوانین جاری استور بررسی شده‌اند.
-- [ ] ZIP نهایی از صفر قابل نصب است.
+- [ ] activation/deactivation/uninstall تست شده است.
+- [ ] security review انجام شده است.
+- [ ] RTL/mobile/accessibility/browser تست شده‌اند.
+- [ ] demo و screenshots به‌روز هستند.
+- [ ] ZIP فقط artifactهای لازم را دارد.
+- [ ] secret/debug/local files حذف شده‌اند.
+- [ ] قوانین جاری ژاکت بررسی شده‌اند.
+- [ ] rollback/recovery strategy مشخص است.
 
 ## به‌روزرسانی بعدی
 
