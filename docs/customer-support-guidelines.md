@@ -1,90 +1,125 @@
-# راهنمای پشتیبانی مشتریان
+# استاندارد پشتیبانی مشتریان و مدیریت تیکت
 
-این سند استاندارد پاسخ‌گویی، ثبت و پیگیری تیکت، مدیریت انتظار، تشخیص باگ و ساخت FAQ را برای تیم محصول تعریف می‌کند.
+این سند استاندارد عملیاتی تیم برای دریافت، تحلیل، اولویت‌بندی، پاسخ، escalation، پیگیری و بستن تیکت مشتری است. هدف، تبدیل پشتیبانی از پاسخ‌گویی موردی به فرآیندی قابل اندازه‌گیری است که feedback مشتری را به bug fix، documentation، FAQ یا بهبود محصول تبدیل می‌کند.
 
 ## 2. اهداف و دامنه (Scope)
 
-پوشش: ticket intake، اولویت‌بندی، پاسخ، escalation، bug report و knowledge base. سیاست مالی/حقوقی مستقل خارج از دامنه است.
+دامنه شامل ticket intake، severity، پاسخ اولیه، جمع‌آوری evidence، bug escalation، communication، resolution، closure و knowledge base است. تعهدات حقوقی، مالی و SLA قراردادی فقط در صورت وجود قرارداد رسمی معتبر هستند.
 
 ## 3. استانداردها و اصول اصلی (Best Practices)
 
-- ابتدا مشکل مشتری را بازگو کنید تا برداشت مشترک ایجاد شود.
-- لحن محترمانه، روشن، مسئولانه و بدون سرزنش باشد.
-- پاسخ باید شامل وضعیت فعلی، اقدام بعدی و در صورت امکان زمان تقریبی باشد؛ زمان قطعی وعده ندهید مگر تعهد واقعی وجود داشته باشد.
-- severity را بر اساس impact و reproducibility تعیین کنید.
-- برای bug حداقل نسخه محصول، WordPress/PHP، URL، steps، expected/actual و screenshot/log لازم است؛ credential درخواست نکنید.
-- تیکت‌های تکراری را به FAQ و internal KB تبدیل کنید.
-- مشکل unresolved را با owner مشخص دنبال کنید.
-- حل مشکل باید در ticket ثبت شود، نه فقط در پیام شفاهی.
+### اصول ارتباط
 
-سطح‌بندی پیشنهادی:
+- ابتدا مسئله مشتری را با زبان ساده بازگو کنید.
+- مشتری را مقصر ندانید.
+- پاسخ باید وضعیت فعلی، اقدام بعدی و owner را مشخص کند.
+- زمان قطعی فقط زمانی اعلام شود که واقعاً تعهد شده است.
+- پاسخ فنی باید قابل فهم و actionable باشد.
+- هر تصمیم مهم داخل ticket ثبت شود.
 
-| سطح | نمونه | اقدام |
+### اطلاعات لازم برای Bug
+
+- نسخه محصول.
+- WordPress/PHP و environment.
+- browser در صورت frontend issue.
+- steps to reproduce.
+- expected behavior.
+- actual behavior.
+- screenshot یا log redact شده در صورت نیاز.
+- زمان رخداد در صورت اهمیت.
+
+هرگز password، credential یا secret درخواست نکنید.
+
+### Severity
+
+| سطح | تعریف | اقدام |
 |---|---|---|
-| بحرانی | سایت/داده در خطر یا سرویس اصلی down | فوری و escalation |
-| بالا | قابلیت اصلی مختل | اولویت بالا |
-| متوسط | workaround وجود دارد | صف عادی |
-| پایین | سوال/بهبود ظاهری | برنامه‌ریزی |
+| Critical | outage، data loss یا security exposure جدی | escalation فوری |
+| High | قابلیت اصلی برای تعداد قابل توجهی از کاربران مختل | اولویت بالا |
+| Medium | مشکل قابل workaround | صف عادی |
+| Low | سوال، cosmetic یا improvement | برنامه‌ریزی |
+
+Severity باید بر اساس impact و reproducibility تعیین شود، نه صرفاً لحن مشتری.
+
+### Feedback Loop
+
+هر issue تکرارشونده باید در یکی از این مسیرها قرار گیرد: fix، FAQ، documentation، automation یا product improvement.
 
 ## 4. ابزارها، کتابخانه‌ها و نسخه‌های پیشنهادی
 
-از helpdesk/CRM مورد تأیید تیم استفاده کنید. برای bug داخلی GitHub Issues/Projects مناسب است؛ برای مستندات FAQ از Markdown یا knowledge base نسخه‌پذیر استفاده کنید.
+- Helpdesk/CRM مورد تأیید سازمان.
+- GitHub Issues/Projects برای engineering work در صورت مناسب بودن repository.
+- Markdown/knowledge base برای documentation.
+- Screenshot و log collection امن.
+
+ابزار خاص نباید باعث ذخیره credential یا داده حساس مشتری شود.
 
 ## 5. مراحل گام‌به‌گام / چک‌لیست عملی
 
-1. تیکت را دریافت و category کنید.
-2. severity و impact را تعیین کنید.
-3. اطلاعات لازم را جمع کنید.
-4. reproduction را انجام دهید.
-5. known issue/FAQ را بررسی کنید.
-6. پاسخ اولیه و next step بدهید.
-7. در صورت bug، issue فنی بسازید و ticket را به آن متصل کنید.
-8. fix را تست کنید.
-9. نتیجه را به زبان مشتری توضیح دهید.
-10. ticket را با solution و version fix شده ببندید.
+1. ticket را دریافت و category کنید.
+2. duplicate و known issue را بررسی کنید.
+3. severity و impact را تعیین کنید.
+4. اطلاعات ناقص را با کمترین درخواست لازم تکمیل کنید.
+5. reproduction را انجام دهید.
+6. root cause یا hypothesis را ثبت کنید.
+7. در صورت bug، engineering issue ایجاد و link کنید.
+8. owner و next step تعیین کنید.
+9. پاسخ status را به مشتری بدهید.
+10. fix را روی محیط امن تست کنید.
+11. نتیجه را با نسخه fix شده ثبت کنید.
+12. پاسخ نهایی و workaround در صورت وجود را ارسال کنید.
+13. ticket را طبق policy ببندید.
+14. issueهای تکراری را به FAQ/KB منتقل کنید.
 
 ## 6. اشتباهات رایج و نحوه پیشگیری از آن‌ها (Common Pitfalls)
 
-- پاسخ کلی بدون اقدام بعدی.
-- مقصر دانستن مشتری.
-- درخواست password یا credential.
-- اعلام زمان قطعی بدون کنترل.
-- بستن ticket بدون تأیید یا توضیح.
-- نگه داشتن راه‌حل فقط در ذهن کارشناس.
+- پاسخ کلی بدون next step.
+- درخواست credential.
+- blame کردن مشتری.
+- اعلام ETA قطعی بدون کنترل.
+- بستن ticket بدون ثبت solution.
+- ارسال log حاوی PII/secret.
+- ساخت issue فنی بدون reproduction.
+- تکرار پاسخ یکسان بدون توجه به context.
 
 ## 7. مثال‌های کد یا نمونه واقعی
 
-الگوی گزارش داخلی:
+قالب گزارش داخلی:
 
 ```text
-Title: فرم رزرو در PHP 8.3 خطای 500 می‌دهد
+Title: فرم رزرو با PHP 8.3 خطای 500 می‌دهد
+Product: Example Plugin 2.4.1
 Environment: WordPress 6.x / PHP 8.3
-Steps: ...
-Expected: ...
-Actual: ...
-Logs: ...
+Steps: 1) ... 2) ... 3) ...
+Expected: فرم ذخیره شود
+Actual: HTTP 500
 Severity: High
+Evidence: sanitized log attached
 Workaround: ...
+Owner: Engineering
 ```
 
 ## 8. نکات امنیتی و عملکردی
 
-داده حساس مشتری را در ticket ذخیره نکنید. log را قبل از اشتراک‌گذاری redact کنید. برای مشکلات performance، قبل/بعد را با metric ثبت کنید.
+ticket system باید حداقل داده لازم را نگه دارد. log قبل از ارسال redact شود. secret، session token، password و PII غیرضروری حذف شوند. در performance issue، baseline و after-fix metric ثبت شود.
 
 ## 9. منابع و مراجع معتبر برای مطالعه بیشتر
 
-- WordPress troubleshooting: https://developer.wordpress.org/
-- OWASP Logging: https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html
+- WordPress Developer: https://developer.wordpress.org/
+- OWASP Logging Cheat Sheet: https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html
+- OWASP: https://owasp.org/
 
 ## 10. چک‌لیست نهایی تأیید (Definition of Done)
 
-- [ ] severity مشخص است.
-- [ ] reproduction یا علت مشخص است.
-- [ ] پاسخ روشن و محترمانه ارسال شده است.
+- [ ] category و severity مشخص است.
+- [ ] reproduction یا علت محتمل ثبت شده است.
+- [ ] پاسخ محترمانه و actionable است.
 - [ ] owner و next step مشخص‌اند.
-- [ ] راه‌حل ثبت شده است.
-- [ ] FAQ/KB در صورت تکراری بودن به‌روزرسانی شده است.
-- [ ] داده حساس در ticket نیست.
+- [ ] credential درخواست نشده است.
+- [ ] evidence حساس redact شده است.
+- [ ] engineering issue در صورت نیاز ساخته شده است.
+- [ ] solution و version fix ثبت شده‌اند.
+- [ ] FAQ/KB در موارد تکراری به‌روز شده است.
 
 ## به‌روزرسانی بعدی
 
