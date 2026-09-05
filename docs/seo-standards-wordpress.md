@@ -1,71 +1,104 @@
-# استانداردهای SEO در WordPress
+# استاندارد SEO و Performance در WordPress
 
-این سند اصول سئوی تکنیکال و پیاده‌سازی آن در قالب WordPress را تعریف می‌کند: crawlability، metadata، heading، URL، image، mobile، performance، structured data و سازگاری با افزونه‌های SEO. Google توصیه می‌کند محتوا people-first باشد، لینک‌ها crawlable باشند و برای image/JS/structured data نیز best practice رعایت شود. citeturn1search15
+این سند استاندارد سئوی تکنیکال و performance در WordPress است و crawlability، indexability، metadata، headings، URL، links، images، mobile، structured data، canonical، sitemap، robots و Core Web Vitals را پوشش می‌دهد. هدف، جلوگیری از این است که theme/plugin به‌صورت ناخواسته سیگنال‌های متناقض SEO یا performance ایجاد کند.
 
 ## 2. اهداف و دامنه (Scope)
 
-پوشش: theme-level SEO و performance و markup. استراتژی محتوایی، link building و campaignهای خارج از کد در دامنه نیست.
+این سند روی implementation فنی تمرکز دارد. استراتژی محتوا، link building، digital PR و campaign خارج از دامنه است. تنظیمات افزونه SEO باید با معماری theme هماهنگ باشد و مالکیت هر خروجی فقط یک محل مشخص داشته باشد.
 
 ## 3. استانداردها و اصول اصلی (Best Practices)
 
-- `<title>`، canonical، robots و meta description نباید توسط theme و SEO plugin همزمان و متناقض تولید شوند.
-- یک H1 منطقی برای محتوای اصلی داشته باشید؛ headingها بر اساس ساختار معنایی، نه ظاهر انتخاب شوند.
-- URL کوتاه، پایدار، خوانا و ترجیحاً بر اساس slug باشد.
-- لینک داخلی باید crawlable و دارای anchor text معنادار باشد.
-- تصویر مهم `alt` توصیفی داشته باشد؛ تصویر تزئینی alt خالی داشته باشد.
-- تصاویر responsive و با ابعاد مشخص برای جلوگیری از CLS ارائه شوند.
-- lazy loading برای تصاویر غیر بحرانی مناسب است؛ LCP image را کورکورانه lazy نکنید.
-- Core Web Vitals شامل LCP، INP و CLS است؛ اهداف «خوب» به‌ترتیب کمتر/برابر 2.5s، کمتر/برابر 200ms و کمتر/برابر 0.1 هستند. citeturn1search0
-- structured data فقط بر اساس محتوای واقعاً موجود و نوع schema معتبر تولید شود.
-- robots.txt، sitemap و canonical را با یک مالکیت مشخص مدیریت کنید.
-- با افزونه‌های SEO مثل Yoast SEO یا Rank Math تداخل markup ایجاد نکنید.
+### Crawl و Index
 
-نمونه semantic markup:
+- صفحات قابل index باید عمداً قابل crawl باشند.
+- `robots.txt` و meta robots نباید ناخواسته صفحه مهم را مسدود کنند.
+- canonical باید یکتا و با URL واقعی هماهنگ باشد.
+- sitemap باید فقط URLهای مناسب index را معرفی کند.
+- 404، redirect و canonical chain بررسی شوند.
 
-```html
-<main>
-    <article>
-        <h1>عنوان مقاله</h1>
-        <p>محتوای اصلی...</p>
-        <img src="example.webp" alt="توضیح دقیق تصویر" width="1200" height="800" loading="lazy">
-    </article>
-</main>
-```
+### Metadata و structure
+
+- title و meta description بر اساس نوع صفحه تولید شوند.
+- theme و SEO plugin نباید title/canonical/schema را duplicate کنند.
+- headingها semantic باشند و برای ظاهر صرفاً از heading level استفاده نشود.
+- HTML semantic و لینک‌های crawlable استفاده شود.
+- anchor text باید معنای مقصد را منتقل کند.
+
+### Images
+
+- `alt` توصیفی برای تصویر محتوایی و خالی برای تصویر صرفاً تزئینی.
+- width/height مناسب برای کاهش layout shift.
+- فرمت و اندازه image متناسب با کاربرد.
+- lazy loading برای تصاویر غیر بحرانی؛ LCP image نباید کورکورانه lazy شود.
+- `srcset`/responsive image در صورت امکان استفاده شود.
+
+### Core Web Vitals
+
+معیارهای اصلی Core Web Vitals عبارت‌اند از LCP، INP و CLS. اهداف رایج «good» به‌ترتیب ≤2.5s، ≤200ms و ≤0.1 هستند؛ thresholdهای جاری باید از منبع رسمی Google در زمان audit کنترل شوند.
+
+### Structured Data
+
+- schema باید با محتوای قابل مشاهده و واقعی صفحه سازگار باشد.
+- از داده ساختاریافته برای ادعای اطلاعاتی که واقعاً در صفحه نیست استفاده نشود.
+- JSON-LD یا روش منتخب باید ownership مشخص داشته باشد.
+- schema را با validator رسمی/مناسب بررسی کنید.
+
+### URL
+
+URL باید پایدار، خوانا و قابل پیش‌بینی باشد. تغییر URL بدون redirect strategy می‌تواند باعث افت crawl و link equity شود.
 
 ## 4. ابزارها، کتابخانه‌ها و نسخه‌های پیشنهادی
 
-- Google Search Console.
-- PageSpeed Insights و Lighthouse.
-- Chrome DevTools.
-- یکی از SEO pluginهای مورد تأیید پروژه؛ همزمان چند موتور metadata فعال نکنید.
-- ابزار validation structured data.
+| ابزار | کاربرد |
+|---|---|
+| Google Search Console | index، query و technical issues |
+| PageSpeed Insights | field/lab performance |
+| Lighthouse | performance/accessibility/SEO audit |
+| Chrome DevTools | network، rendering و performance |
+| Schema validator | بررسی structured data |
+| یک SEO plugin | metadata/sitemap/schema در صورت نیاز |
+
+همزمان چند SEO engine را برای تولید یک خروجی فعال نکنید.
 
 ## 5. مراحل گام‌به‌گام / چک‌لیست عملی
 
-1. indexability و robots را بررسی کنید.
-2. sitemap و canonical را بررسی کنید.
-3. title/meta و heading را crawl کنید.
-4. URLها و redirectها را بررسی کنید.
-5. image dimensions/alt/lazy loading را کنترل کنید.
-6. mobile layout و viewport را تست کنید.
-7. Core Web Vitals را اندازه‌گیری کنید.
-8. structured data را validate کنید.
-9. 404، pagination و archiveها را بررسی کنید.
-10. تداخل theme و SEO plugin را تست کنید.
+1. URLهای مهم و نوع pageها را inventory کنید.
+2. indexability و robots را بررسی کنید.
+3. sitemap را بررسی کنید.
+4. canonical و redirectها را crawl کنید.
+5. title، description و headingها را بررسی کنید.
+6. internal links و anchor text را بررسی کنید.
+7. image alt، dimensions و loading را بررسی کنید.
+8. mobile rendering و viewport را تست کنید.
+9. LCP، INP و CLS را اندازه‌گیری کنید.
+10. render-blocking resource و third-party scriptها را بررسی کنید.
+11. structured data را validate کنید.
+12. theme و SEO plugin را برای duplicate output بررسی کنید.
+13. 404، pagination، archive و search behavior را بررسی کنید.
+14. بعد از release دوباره Search Console و performance را monitor کنید.
 
 ## 6. اشتباهات رایج و نحوه پیشگیری از آن‌ها (Common Pitfalls)
 
-- تولید دو title/canonical.
+- دو title یا canonical.
 - noindex ناخواسته.
-- H1 متعدد بدون منطق.
+- sitemap شامل URLهای noindex.
+- schema جعلی.
 - alt پر از keyword.
 - lazy loading عنصر LCP.
-- تصاویر بدون width/height.
-- schema جعلی یا ناسازگار با محتوای صفحه.
+- image بدون dimensions.
+- JavaScript سنگین و third-party غیرضروری.
+- redirect chain.
+- تغییر slug بدون redirect.
 
 ## 7. مثال‌های کد یا نمونه واقعی
 
-برای داده ساختاریافته، JSON-LD را فقط با داده واقعی تولید کنید:
+نمونه semantic image:
+
+```html
+<img src="example.webp" alt="نمایش داشبورد مدیریت فروشگاه" width="1200" height="800" loading="lazy">
+```
+
+نمونه JSON-LD باید فقط داده واقعی را شامل شود:
 
 ```html
 <script type="application/ld+json">
@@ -79,25 +112,28 @@
 
 ## 8. نکات امنیتی و عملکردی
 
-structured data را از input خام بدون escaping/encoding صحیح تولید نکنید. scriptهای third-party را محدود کنید. font و image را بهینه کنید و caching/CDN را با cache invalidation صحیح تنظیم کنید.
+داده خام user را مستقیماً وارد JSON-LD یا HTML نکنید؛ context-aware encoding لازم است. third-party scriptها را محدود کنید. font، CSS و image را بهینه کنید. caching باید همراه با cache invalidation درست باشد. performance regression باید در releaseهای مهم بررسی شود.
 
 ## 9. منابع و مراجع معتبر برای مطالعه بیشتر
 
 - Google Search Essentials: https://developers.google.com/search/docs/essentials
 - Core Web Vitals: https://developers.google.com/search/docs/appearance/core-web-vitals
 - Schema.org: https://schema.org/
-- WordPress: https://developer.wordpress.org/themes/
+- WordPress Developer: https://developer.wordpress.org/
 
 ## 10. چک‌لیست نهایی تأیید (Definition of Done)
 
 - [ ] indexability صحیح است.
-- [ ] title/meta/canonical یکتا و بدون conflict است.
-- [ ] headingها semantic هستند.
-- [ ] images دارای alt و ابعاد مناسب‌اند.
+- [ ] robots/sitemap/canonical بدون conflict هستند.
+- [ ] title/meta و headingها صحیح‌اند.
+- [ ] URL و redirect strategy بررسی شده است.
+- [ ] images دارای alt و dimensions مناسب‌اند.
 - [ ] mobile تست شده است.
-- [ ] CWV اندازه‌گیری و موارد بحرانی اصلاح شده‌اند.
+- [ ] Core Web Vitals اندازه‌گیری شده‌اند.
 - [ ] structured data معتبر و واقعی است.
-- [ ] با SEO plugin تداخل وجود ندارد.
+- [ ] third-party scriptهای غیرضروری حذف شده‌اند.
+- [ ] با SEO plugin duplicate output وجود ندارد.
+- [ ] post-release monitoring برنامه‌ریزی شده است.
 
 ## به‌روزرسانی بعدی
 
