@@ -9,24 +9,26 @@
 1. `php-standards.md`
 2. `frontend-tailwind-nodejs.md`
 3. `wordpress-theme-development.md` یا `wordpress-plugin-development.md`
-4. `debugging-guide.md`
-5. `git-essentials.md`
-6. `seo-standards-wordpress.md`
+4. `testing-quality-assurance.md`
+5. `debugging-guide.md`
+6. `git-essentials.md`
+7. `seo-standards-wordpress.md`
 
 ### مسیر Release/QA
 
-1. `debugging-guide.md`
-2. `product-release-checklist.md`
-3. `product-preview-creation.md`
-4. `seo-standards-wordpress.md`
-5. `customer-support-guidelines.md`
+1. `testing-quality-assurance.md`
+2. `debugging-guide.md`
+3. `product-release-checklist.md`
+4. `product-preview-creation.md`
+5. `seo-standards-wordpress.md`
+6. `customer-support-guidelines.md`
 
 ### مسیر AI
 
 1. `ai-assistant-workflow.md`
 2. اسناد stack مرتبط با task
-3. `git-essentials.md`
-4. `debugging-guide.md`
+3. `testing-quality-assurance.md`
+4. `git-essentials.md`
 
 ## فهرست رسمی اسناد
 
@@ -36,6 +38,7 @@
 | [php-standards.md](php-standards.md) | PHP | PSR، Composer، PSR-4، PHPDoc، type system و exceptions |
 | [wordpress-theme-development.md](wordpress-theme-development.md) | WordPress Theme | classic/block theme، hierarchy، assets، theme.json، Gutenberg، FSE و child theme |
 | [wordpress-plugin-development.md](wordpress-plugin-development.md) | WordPress Plugin | architecture، hooks، lifecycle، security، database، REST/AJAX و i18n |
+| [testing-quality-assurance.md](testing-quality-assurance.md) | QA | test strategy، unit/integration/E2E، regression، compatibility و quality gates |
 | [debugging-guide.md](debugging-guide.md) | Quality | debugging سیستماتیک PHP/WordPress/JS، logs، Query Monitor و Xdebug |
 | [product-release-checklist.md](product-release-checklist.md) | Release | code freeze، testing، packaging، security، documentation و release gate |
 | [seo-standards-wordpress.md](seo-standards-wordpress.md) | SEO | technical SEO، Core Web Vitals، metadata، schema، images و crawlability |
