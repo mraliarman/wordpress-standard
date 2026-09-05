@@ -1,95 +1,137 @@
-# گردش‌کار استفاده از دستیار هوش مصنوعی در توسعه
+# استاندارد گردش‌کار استفاده از دستیار هوش مصنوعی
 
-این سند روش استفاده حرفه‌ای از AI به‌عنوان دستیار توسعه را تعریف می‌کند: نوشتن prompt، دادن context، تقسیم مسئله، بررسی خروجی، تست، امنیت و ثبت تصمیم‌ها. مرجع اصلی این سند منبع درخواستی تیم، https://llm.bestjustify.ir/ است؛ در زمان تدوین این فایل دسترسی مستقیم به محتوای سایت از ابزار مرور در دسترس نبود، بنابراین خلاصه‌ای از محتوای اختصاصی آن ادعا نمی‌شود و این مورد «نیاز به بررسی» است.
+این سند چارچوب استفاده حرفه‌ای، امن و قابل کنترل از AI در توسعه نرم‌افزار است. AI در این repository نقش دستیار تحلیل، coding، debugging، refactoring، documentation و review اولیه را دارد و هرگز جایگزین مالکیت مهندس، تست، code review یا تصمیم معماری نیست. مرجع اصلی اعلام‌شده تیم `https://llm.bestjustify.ir/` است؛ در آخرین بررسی محیطی، دسترسی مستقیم به محتوای آن ممکن نبود، بنابراین خلاصه‌ای از محتوای اختصاصی آن بدون مشاهده منبع ادعا نمی‌شود و این مورد «نیاز به بررسی» است.
 
 ## 2. اهداف و دامنه (Scope)
 
-پوشش: coding assistant، debugging، refactoring، documentation، review و prompt engineering. جایگزینی review انسانی، تست یا مسئولیت مهندس خارج از دامنه است.
+دامنه شامل prompt engineering، context management، coding assistant، debugging، refactoring، documentation، review، validation و security hygiene است. تصمیم‌های نهایی architecture، merge و release در اختیار انسان مسئول باقی می‌ماند.
 
 ## 3. استانداردها و اصول اصلی (Best Practices)
 
-- prompt باید هدف، context، constraints، ورودی واقعی، خروجی مورد انتظار و معیار پذیرش را مشخص کند.
-- مسئله بزرگ را به taskهای قابل تست تقسیم کنید.
-- نسخه زبان/framework، ساختار فایل و خطای کامل را ارائه دهید.
-- از AI بخواهید قبل از تغییر، assumptions و affected files را مشخص کند.
-- خروجی را بدون review وارد production نکنید.
-- هر patch باید lint، test، security review و regression test داشته باشد.
-- برای کد حساس، خروجی AI را مانند کد شخص ثالث غیرقابل اعتماد بررسی کنید.
-- secret، token، credential، PII و فایل خصوصی را در prompt ارسال نکنید مگر محیط و سیاست سازمان صریحاً اجازه دهد.
-- برای debugging، reproduction و expected/actual behavior را دقیق ارائه کنید.
-- برای refactor، رفتار موجود را invariant تعریف کنید و سپس تغییر دهید.
+### Prompt Contract
 
-قالب پیشنهادی prompt:
+هر prompt مهم باید تا حد امکان شامل این موارد باشد:
 
 ```text
-نقش: مهندس ارشد WordPress/PHP
-هدف: [نتیجه دقیق]
-Context: [نسخه‌ها، ساختار، فایل‌ها]
-مشکل: [actual vs expected]
-محدودیت‌ها: [framework، style، عدم تغییر API]
-خروجی: [فایل/patch/توضیح]
-معیار پذیرش: [testable checklist]
+Role
+Goal
+Context
+Current behavior
+Expected behavior
+Constraints
+Affected files
+Output format
+Acceptance criteria
+Validation requirements
 ```
+
+### اصل Context حداقلی ولی کافی
+
+تمام repository را بدون نیاز ارسال نکنید. فقط فایل‌ها، نسخه‌ها، errorها، interfaces و constraints مؤثر را ارائه کنید. اما context حیاتی را نیز حذف نکنید؛ پاسخ AI بدون context کافی قابل اعتماد نیست.
+
+### AI Change Protocol
+
+1. ابتدا مسئله را خلاصه کنید.
+2. assumptions را مشخص کنید.
+3. affected files را تعیین کنید.
+4. plan کوتاه بدهید.
+5. کوچک‌ترین patch لازم را تولید کنید.
+6. diff را review کنید.
+7. test/lint/static analysis اجرا کنید.
+8. security/performance impact را بررسی کنید.
+9. regression test اضافه کنید.
+10. سپس commit/merge کنید.
+
+### Validation
+
+هیچ API، package، hook، function، class یا command ناشناخته‌ای صرفاً چون AI پیشنهاد داده پذیرفته نشود. نسخه documentation و compatibility باید بررسی شود.
+
+### محرمانگی
+
+secret، token، credential، private key، PII و داده حساس مشتری را وارد prompt نکنید مگر محیط و policy سازمان صریحاً مجاز کرده باشد. نمونه‌سازی باید با داده synthetic انجام شود.
 
 ## 4. ابزارها، کتابخانه‌ها و نسخه‌های پیشنهادی
 
-ابزار AI باید با policy تیم و repository permissions سازگار باشد. ابزارهای تست همان stack پروژه هستند: PHPUnit، PHPStan، PHPCS، Playwright/Cypress در صورت نیاز و browser DevTools.
+ابزار AI خاصی الزام‌آور نیست؛ ابزار باید با policy امنیتی و دسترسی repository سازگار باشد. برای validation از stack واقعی پروژه استفاده کنید:
+
+- PHPStan
+- PHPCS/WPCS
+- PHPUnit
+- Browser DevTools
+- Lighthouse
+- Git diff/PR review
+- CI pipeline
 
 ## 5. مراحل گام‌به‌گام / چک‌لیست عملی
 
-1. مسئله را دقیق تعریف کنید.
-2. context حداقلی ولی کافی بدهید.
-3. محدودیت‌ها و استانداردهای repo را اعلام کنید.
-4. از AI بخواهید plan بدهد.
-5. فایل‌های affected را تعیین کنید.
-6. patch کوچک تولید کنید.
-7. diff را review کنید.
-8. lint/static analysis/test اجرا کنید.
-9. security و performance را بررسی کنید.
-10. regression test اضافه کنید.
-11. commit message و changelog مناسب ثبت کنید.
-12. نتیجه و تصمیم‌های مهم را مستند کنید.
+1. requirement را دقیق بنویسید.
+2. repository rules را در اختیار AI قرار دهید.
+3. versionهای PHP/WordPress/Tailwind/Node را مشخص کنید.
+4. expected/actual را ثبت کنید.
+5. AI را وادار به اعلام assumptions کنید.
+6. affected files را مشخص کنید.
+7. patch کوچک دریافت کنید.
+8. diff را خط‌به‌خط review کنید.
+9. dependency و APIهای جدید را verify کنید.
+10. lint/static analysis/test اجرا کنید.
+11. security review انجام دهید.
+12. performance regression را در صورت کاربرد بررسی کنید.
+13. regression test اضافه کنید.
+14. documentation را به‌روز کنید.
+15. commit استاندارد و قابل ردیابی ایجاد کنید.
 
 ## 6. اشتباهات رایج و نحوه پیشگیری از آن‌ها (Common Pitfalls)
 
-- prompt مبهم و انتظار خروجی دقیق.
-- اعتماد به API یا version اشتباه.
-- قبول کردن hallucinated function/class.
+- prompt مبهم.
+- context ناقص.
+- اعتماد به hallucinated API.
+- نصب dependency بدون بررسی.
 - refactor بزرگ بدون test.
-- کپی کردن secret به prompt.
-- درخواست «کد کامل» بدون repository context.
+- ارسال secret.
+- قبول کردن code فقط چون compile می‌شود.
+- نادیده گرفتن compatibility WordPress/PHP.
+- درخواست rewrite کامل وقتی patch کوچک کافی است.
 
 ## 7. مثال‌های کد یا نمونه واقعی
 
-نمونه درخواست خوب برای bug:
+نمونه prompt برای debugging:
 
 ```text
-در WordPress 6.x و PHP 8.x، صفحه /admin/example/ هنگام ارسال فرم با 403 برمی‌گردد.
-Nonce action برابر example-save است. expected: ذخیره برای کاربران manage_options.
-فایل‌های مرتبط: src/Admin/ExamplePage.php و assets/admin.js.
-بدون تغییر schema، root cause را پیدا و patch حداقلی پیشنهاد کن و تست regression بده.
+نقش: مهندس ارشد WordPress/PHP
+هدف: پیدا کردن root cause خطای 500
+Context: WordPress 6.x، PHP 8.3، plugin version 2.4.1
+Actual: POST به /wp-admin/admin-ajax.php با HTTP 500 شکست می‌خورد
+Expected: درخواست با capability مناسب ذخیره شود
+Constraints: schema تغییر نکند؛ API عمومی حفظ شود
+Affected files: src/Admin/Example.php و assets/admin.js
+Output: ابتدا root cause و affected code، سپس patch حداقلی و regression test
+Acceptance: PHPCS، PHPStan و PHPUnit بدون خطا
 ```
 
 ## 8. نکات امنیتی و عملکردی
 
-AI ممکن است dependency ناامن، query آسیب‌پذیر، escaping ناقص یا API منسوخ پیشنهاد کند. dependency را قبل از نصب بررسی کنید. خروجی AI را از نظر XSS، SQL injection، CSRF، privilege escalation و SSRF بررسی کنید.
+خروجی AI را untrusted code در نظر بگیرید. XSS، SQL injection، CSRF، privilege escalation، SSRF، file upload و dependency risk را بررسی کنید. prompt injection نیز در سیستم‌هایی که AI با داده خارجی کار می‌کند باید در threat model لحاظ شود. هیچ دستور تولیدشده توسط AI نباید بدون بررسی در production اجرا شود.
 
 ## 9. منابع و مراجع معتبر برای مطالعه بیشتر
 
-- مرجع اصلی داخلی: https://llm.bestjustify.ir/ — نیاز به بررسی محتوای جاری و استخراج خلاصه رسمی.
+- مرجع اصلی داخلی: https://llm.bestjustify.ir/ — **نیاز به بررسی:** دسترسی و استخراج محتوای جاری.
 - WordPress Developer: https://developer.wordpress.org/
 - PHP Manual: https://www.php.net/docs.php
+- OWASP: https://owasp.org/
 
 ## 10. چک‌لیست نهایی تأیید (Definition of Done)
 
-- [ ] prompt هدف و معیار پذیرش دارد.
-- [ ] نسخه‌ها و context مشخص‌اند.
-- [ ] هیچ secret غیرضروری ارسال نشده است.
+- [ ] goal/context/constraint مشخص است.
+- [ ] assumptions شناسایی شده‌اند.
+- [ ] secret یا داده حساس غیرضروری ارسال نشده است.
+- [ ] API و dependencyهای پیشنهادی verify شده‌اند.
 - [ ] diff انسانی review شده است.
 - [ ] lint/static analysis/test موفق است.
-- [ ] security و performance بررسی شده‌اند.
-- [ ] regression test اضافه شده است.
-- [ ] تصمیم‌ها و محدودیت‌های مهم مستند شده‌اند.
+- [ ] security review انجام شده است.
+- [ ] performance impact بررسی شده است.
+- [ ] regression test در صورت نیاز اضافه شده است.
+- [ ] documentation به‌روز شده است.
+- [ ] commit قابل ردیابی است.
 
 ## به‌روزرسانی بعدی
 
